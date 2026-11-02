@@ -48,7 +48,7 @@ export class EndScene extends Phaser.Scene {
     }
 
     const btn = this.add.rectangle(W / 2, H - 80, 420, 66, 0xe0306a).setStrokeStyle(4, 0xffd1e6).setInteractive({ useHandCursor: true });
-    t(W / 2, H - 80, 'ЕЩЁ РАЗ (Enter)', 32, '#fff', '#5a0030', 6);
+    t(W / 2, H - 80, 'ЕЩЁ РАЗ', 32, '#fff', '#5a0030', 6);
     const go = () => {
       sfx.click();
       this.scene.start('Game');

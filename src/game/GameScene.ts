@@ -13,6 +13,7 @@ import { UPGRADES, UP_BY_ID, type UpDef } from './upgrades';
 import { updateWeapons } from './weapons';
 import { Hud } from './hud';
 import { Bot, runBatch } from './bot';
+import { TouchControls, isTouchDevice } from './touch';
 
 const CS = 96; // размер ячейки сетки
 const GN = Math.ceil(WORLD / CS) + 1;
@@ -101,6 +102,7 @@ export class GameScene extends Phaser.Scene {
   private puffs!: Phaser.GameObjects.Particles.ParticleEmitter;
   private hearts!: Phaser.GameObjects.Particles.ParticleEmitter;
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
+  touch: TouchControls | null = null;
 
   constructor() {
     super('Game');
@@ -161,7 +163,7 @@ export class GameScene extends Phaser.Scene {
     this.input.mouse?.disableContextMenu();
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       sfx.unlock();
-      if (this.paused || this.over) return;
+      if (p.wasTouch || this.paused || this.over) return;
       if (p.rightButtonDown()) {
         this.chosen = null;
         return;
@@ -169,6 +171,8 @@ export class GameScene extends Phaser.Scene {
       const wp = cam.getWorldPoint(p.x, p.y);
       this.chooseAt(wp.x, wp.y);
     });
+
+    if (isTouchDevice() || params.has('touch')) this.touch = new TouchControls(this);
 
     (window as unknown as { __g: GameScene }).__g = this;
     if (params.has('speed')) this.timeScale = Number(params.get('speed')) || 1;
@@ -219,6 +223,7 @@ export class GameScene extends Phaser.Scene {
 
   // =====================================================================
   update(_time: number, delta: number) {
+    if (this.touch && window.innerHeight > window.innerWidth && !this.paused) this.togglePause();
     this.handleKeys();
     if (!this.over) {
       if (!this.paused) {
@@ -238,6 +243,12 @@ export class GameScene extends Phaser.Scene {
     this.hud.update();
   }
 
+  togglePause() {
+    if (this.over || this.menuOptions) return;
+    this.paused = !this.paused;
+    this.hud.setPaused(this.paused);
+  }
+
   private handleKeys() {
     const k = this.keys;
     const JD = Phaser.Input.Keyboard.JustDown;
@@ -252,10 +263,7 @@ export class GameScene extends Phaser.Scene {
       if (JD(k.ENTER) || JD(k.SPACE)) this.scene.start('Game');
       return;
     }
-    if (JD(k.P) || JD(k.ESC)) {
-      this.paused = !this.paused;
-      this.hud.setPaused(this.paused);
-    }
+    if (JD(k.P) || JD(k.ESC)) this.togglePause();
     if (JD(k.SPACE) && !this.paused) {
       const wp = this.cameras.main.getWorldPoint(this.input.activePointer.x, this.input.activePointer.y);
       this.chooseNearest(wp.x, wp.y, 1e9);
@@ -288,6 +296,7 @@ export class GameScene extends Phaser.Scene {
   private readInput() {
     if (this.bot) return;
     const k = this.keys;
+    if (this.touch && !k.A.isDown && !k.D.isDown && !k.W.isDown && !k.S.isDown && !k.LEFT.isDown && !k.RIGHT.isDown && !k.UP.isDown && !k.DOWN.isDown) return;
     let x = 0;
     let y = 0;
     if (k.A.isDown || k.LEFT.isDown) x -= 1;

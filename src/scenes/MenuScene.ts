@@ -36,6 +36,7 @@ export class MenuScene extends Phaser.Scene {
       '👶  Малыши — это опыт и подарки. Но элитки и боссы-«дети» умеют кусаться…',
       '',
       'WASD / стрелки — бег     ЛКМ — выбрать     ПКМ — отменить     P — пауза     M — звук',
+      'С телефона: джойстик слева — бег, тап по даме — выбрать, кнопки ⏸ и ✖ справа',
       'Стрельба автоматическая. Все «сцены» — за кадром: тут только сердечки 🌳',
     ];
     this.add.text(W / 2, 252, lines.join('\n'), { fontFamily: FONT, fontSize: '18px', color: '#f3e8ff', align: 'center', lineSpacing: 6, stroke: '#1a0a1e', strokeThickness: 4 }).setOrigin(0.5, 0);
@@ -77,7 +78,7 @@ export class MenuScene extends Phaser.Scene {
     if (best) t(W - 20, 18, `Рекорд: ${best.win ? '🏆 ПОБЕДА' : `${Math.floor(best.time / 60)}:${String(Math.floor(best.time % 60)).padStart(2, '0')}`}  ·  детей: ${best.kids}`, 16, '#ffe9a0').setOrigin(1, 0.5);
 
     const btn = this.add.rectangle(W / 2, H - 46, 380, 56, 0xe0306a).setStrokeStyle(4, 0xffd1e6).setInteractive({ useHandCursor: true });
-    const bt = t(W / 2, H - 46, 'ИГРАТЬ (Enter)', 28, '#fff', '#5a0030', 6);
+    const bt = t(W / 2, H - 46, 'ИГРАТЬ', 28, '#fff', '#5a0030', 6);
     this.tweens.add({ targets: [btn, bt], scale: 1.05, yoyo: true, repeat: -1, duration: 600 });
     const start = () => {
       sfx.unlock();

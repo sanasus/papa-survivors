@@ -2,15 +2,23 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Папа Выживает</title>
     <style>
-      html, body { margin: 0; height: 100%; background: #14101c; overflow: hidden; }
-      #game { width: 100vw; height: 100vh; }
+      html, body { margin: 0; height: 100%; background: #14101c; overflow: hidden; touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+      #game { width: 100vw; height: 100vh; height: 100dvh; }
+      #rotate { display: none; position: fixed; inset: 0; z-index: 10; background: #14101c; color: #ffd34d;
+        font: bold 22px 'Trebuchet MS', 'Segoe UI', sans-serif; text-align: center; align-items: center; justify-content: center; flex-direction: column; gap: 18px; padding: 24px; }
+      #rotate span { font-size: 72px; display: inline-block; animation: tilt 1.6s ease-in-out infinite; }
+      @keyframes tilt { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-90deg); } }
+      @media (orientation: portrait) and (pointer: coarse) { #rotate { display: flex; } }
     </style>
   </head>
   <body>
     <div id="game"></div>
+    <div id="rotate"><span>📱</span>Поверните телефон горизонтально</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
